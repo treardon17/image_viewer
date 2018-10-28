@@ -49,56 +49,11 @@ class FileIO {
           if (!fullPath) {
             fileList = fileList.map((file) => file.replace(filePath, ''))
           }
-          // group the images by folder if needed
-          if (group) {
-            const groupObj = this.groupFiles({ files: fileList })
-            return resolve(groupObj)
-          }
-          // else if (tree) {
-          //   const groupObj = this.groupFiles({ files: fileList })
-          //   const fileTree = this.fileTree({ groupedFiles: groupObj })
-          //   return resolve(fileTree)
-          // }
           return resolve(fileList)
         } else reject(err)
       })
     })
   }
-
-  groupFiles({ files }) {
-    const groupObj = {}
-    files.forEach((file) => {
-      let fileGroup = file.split('/').filter((part) => part !== '')
-      fileGroup.pop()
-      fileGroup = fileGroup.join('/')
-        if (!groupObj[fileGroup]) groupObj[fileGroup] = []
-        groupObj[fileGroup].push(file.replace(`/${fileGroup}`, '').replace('/', ''))
-    })
-    return groupObj
-  }
-
-  // fileTree({ groupedFiles = {} }) {
-  //   const tree = {}
-  //   Object.keys(groupedFiles).forEach((path) => {
-  //     const pathParts = path.split('/').filter((part) => part !== '')
-  //     let currObj = tree
-  //     while (pathParts.length > 0) {
-  //       const part = pathParts.shift()
-  //       if (!currObj[part]) currObj[part] = {}
-  //       currObj = currObj[part]
-  //       if (pathParts.length === 0) {
-  //         groupedFiles[path].forEach((child) => {
-  //           if (this.isDirectory({ src: `${path}/` })) {
-  //             currObj[child] = {}
-  //           } else if (this.fileExists({ src: path })) {
-  //             currObj[child] = path
-  //           }
-  //         })
-  //       }
-  //     }
-  //   })
-  //   return tree
-  // }
 
   isDirectory({ src }) {
     try {
