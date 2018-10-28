@@ -19,12 +19,20 @@ class FileIO {
   async getFilesInDirectory({
     src,
     type,
-    group = false,
-    // tree = false,
     fullPath = false,
     depth = 0
   } = {}) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      if (Array.isArray(src)) {
+        let combinedFiles = []
+        for (let i = 0; i < src.length; i += 1) {
+          const files = await this.getFilesInDirectory({ src: src[i], type, fullPath, depth })
+          combinedFiles = [...combinedFiles, ...files]
+        }
+        const uniqueFiles = [...new Set(combinedFiles)]
+        return resolve(uniqueFiles)
+      }
+
       const filePath = this.getAliasedFilePath({ src })
       let depthString = '*'
       if (depth === -1 || depth === Number.POSITIVE_INFINITY) {
@@ -185,7 +193,8 @@ FileIO.prototype.alias = {
 }
 
 FileIO.prototype.fileExtRegex = {
-  'image': (/\.(gif|jpe?g|tiff|png)$/i)
+  'image': (/\.(gif|jpe?g|tiff|png)$/i),
+  'jpeg': (/\.(jpe?g)$/i)
 }
 
 module.exports = new FileIO()

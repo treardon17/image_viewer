@@ -122,7 +122,7 @@ class TRImage {
   async checkDuplicate({ image }) {
     return new Promise(async (resolve, reject) => {
       if (image instanceof TRImage) {
-        const width = 300
+        const width = 150
         const img1 = await this.getResizedBuffer({ width })
         const img2 = await image.getResizedBuffer({ width } )
         Vision.checkDuplicate({ img1, img2 })

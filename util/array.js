@@ -25,6 +25,14 @@ class ArrayUtil {
       .filter(x => !array2.includes(x))
       .concat(array2.filter(x => !array1.includes(x)))
   }
+  chunk({ array, size = 10 }) {
+    return array.reduce((resultArray, item, index) => {
+      const chunkIndex = Math.floor(index / size)
+      if (!resultArray[chunkIndex]) resultArray[chunkIndex] = [] // start a new chunk
+      resultArray[chunkIndex].push(item)
+      return resultArray
+    }, [])
+  }
 }
 
 module.exports = new ArrayUtil()
