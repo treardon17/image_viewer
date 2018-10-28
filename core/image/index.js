@@ -127,6 +127,7 @@ class TRImage {
         const img2 = await image.getResizedBuffer({ width } )
         Vision.checkDuplicate({ img1, img2 })
           .then((compareData) => {
+            compareData.match = 1 - (compareData.rawMisMatchPercentage / 100)
             resolve(compareData)
           })
           .catch((error) => {
