@@ -2,7 +2,7 @@ const cv = require('opencv4nodejs')
 const resemble = require('resemblejs')
 
 class Vision {
-  static checkDuplicate({ img1, img2 }) {
+  static async checkDuplicate({ img1, img2 }) {
     return new Promise((resolve, reject) => {
       resemble(img1).compareTo(img2).ignoreColors().onComplete((data) => {
         resolve(data)
