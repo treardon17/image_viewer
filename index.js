@@ -1,8 +1,4 @@
 const Util = require('./util')
-// const Exif = require('./core/image/exif')
-// const classifyImg = require('./core/ai/classify')
-// const cv = require('opencv4nodejs')
-const Vision = require('./core/image/vision')
 const TRImage = require('./core/image')
 
 
@@ -60,7 +56,7 @@ const checkDups = async ({ src, src2 }) => {
             duplicateItem.push(img2Path)
             observed.add(img2Path)
             delete cache[img2Path]
-            await Util.FileIO.writeFile({ src: '@/data/file-data/duplicate-images.json', data: duplicates })
+            await Util.FileIO.writeFile({ src: '@/data/file-data/duplicates.json', data: duplicates })
           }
         }
       }
@@ -69,12 +65,6 @@ const checkDups = async ({ src, src2 }) => {
     }
   })
 }
-
-// ways to make this faster?
-// 1. cache the image buffers
-// 2. don't destroy the secondary images
-// 3. add images from images1 to observed
-// 4. chunk images2 into groups of 10
 
 checkDups({
   src: '/Volumes/TDR1TB/Pictures/Google\ Photos/HEIC_TO_JPEG',
