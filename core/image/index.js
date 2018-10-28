@@ -11,6 +11,7 @@ class TRImage {
 
     this._imageDataDirty = true
     this._setupPromise = null
+    this._thumbnail = null
     this.imageData = null
     this.image = Sharp(this.path)
     this.setupImage()
@@ -50,13 +51,21 @@ class TRImage {
     return null
   }
 
+  async thumbnail() {
+    return new Promise(async (resolve, reject) => {
+      if (!this._thumbnail || this._imageDataDirty) {
+        this._thumbnail = await this.getResizedBuffer({ width: 50 })
+      }
+      resolve(this._thumbnail)
+    })
+  }
+
   // //////////////////////
   // SETUP
   // //////////////////////
   async setupImage() {
     this._setupPromise = this.updateImageData()
       .then((data) => {
-        this.imageData = data
         typeof this.onLoad === 'function' && this.onLoad(this)
       })
       .catch((error) => {
@@ -69,11 +78,12 @@ class TRImage {
 
   async updateImageData() {
     if (this._setupPromise === null) {
-      return new Promise((resolve, reject) => {
+      return new Promise(async (resolve, reject) => {
         if (this._imageDataDirty) {
           this.image
             .metadata()
-            .then((data) => {
+            .then(async (data) => {
+              this.imageData = data
               this._imageDataDirty = false
               resolve(data)
             })
@@ -122,9 +132,8 @@ class TRImage {
   async checkDuplicate({ image }) {
     return new Promise(async (resolve, reject) => {
       if (image instanceof TRImage) {
-        const width = 150
-        const img1 = await this.getResizedBuffer({ width })
-        const img2 = await image.getResizedBuffer({ width } )
+        const img1 = await this.thumbnail()
+        const img2 = await image.thumbnail()
         Vision.checkDuplicate({ img1, img2 })
           .then((compareData) => {
             compareData.match = 1 - (compareData.rawMisMatchPercentage / 100)
